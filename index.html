@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Simple Map</title>
+        <meta name="viewport" content="initial-scale=1.0">
+        <meta charset="utf-8">
+        <style>
+            /*Always set the map style explicitly to define the size of the div element that contains it*/
+            #map{
+                height: 100%;
+            }
+            /*Optional: makes the sample page fill the window*/
+            html, body{
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            /* The location pointed to by the popup tip. */
+           .popup-tip-anchor {
+                height: 0;
+                position: absolute;
+                /* The max width of the info window. */
+                width: 100px;
+            }
+            /* The bubble is anchored above the tip. */
+            .popup-bubble-anchor {
+                position: absolute;
+                width: 100%;
+                left: 0;
+                bottom: /* TIP_HEIGHT= */ 8px;
+            }
+            /* Draw the tip. */
+            .popup-bubble-anchor::after {
+                content: "";
+                position: absolute;
+                top: -2px;
+                left: 0;
+                /* Center the tip horizontally. */
+                transform: translate(-50%, 0);
+                /* The tip is a https://css-tricks.com/snippets/css/css-triangle/ */
+                width: 0;
+                height: 0;
+                /* The tip is 10px high, and 20px wide. */
+                border-left: 10px solid transparent;
+                border-right: 10px solid transparent;
+                border-top: /* TIP_HEIGHT= */ 10px solid white;
+            }
+            /* The popup bubble itself. */
+            .popup-bubble-content {
+                position: absolute;
+                top: 0;
+                left: 0;
+                transform: translate(-50%, -100%);
+                /* Style the info window. */
+                background-color: white;
+                padding: 4px;
+                font-family: sans-serif;
+                overflow: hidden;
+                max-height: 50px;
+                max-width: 50px;
+                box-shadow: 0px 2px 10px 1px rgba(0,0,0,0.5);
+            }
+            img{
+/*                max-width: 100%;*/
+                width: 100%;
+            }
+            .photo-div{
+                margin: 0;
+                padding: 0;
+                width: 800px;
+                position: absolute;
+                transform: translate(-50%, -50%);
+                left: 0;
+                top: 0;
+                background-color: rgba(0,0,0,0.5);
+                box-shadow: 0px 2px 10px 1px rgba(0,0,0,0.5);
+            };
+        </style>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDccgyZBYmjbuuDOMy6zsR1GKVTSclBPGs&callback=initMap"></script>
+        <script>
+            var map;
+            var markerPopup;
+            var imagePopup;
+            var markers = [];
+            var currentPopup;
+            
+     
+            function addPhoto(coords, imgsrc){
+                var marker = new markerPopup(coords, imgsrc);
+                var img = new imagePopup(imgsrc);
+                marker.setMap(map);
+                markers.push(marker);
+                google.maps.event.addDomListener(marker.anchor, 'click', function(){
+                    img.setMap(map);
+                    currentPopup = img;
+                });
+            }
+            
+            function initMap(){
+                // Define the popup
+                defineMarkerPopup();
+                defineImagePopup();
+                
+                //Style the map
+                var styledMapType = new google.maps.StyledMapType(
+                    [
+                      {
+                        "elementType": "geometry",
+                        "stylers": [
+                          {
+                            "color": "#eaeaea"
+                          }
+                        ]
+                      },
+                      {
+                        "elementType": "labels",
+                        "stylers": [
+                          {
+                            "visibility": "off"
+                          }
+                        ]
+                      },
+                      {
+                        "elementType": "labels.icon",
+                        "stylers": [
+                          {
+                            "visibility": "off"
+                          }
+                        ]
+                      },
+                      {
+                        "elementType": "labels.text.fill",
+                        "stylers": [
+                          {
+                            "color": "#616161"
+                          }
+                        ]
+                      },
+                      {
+                        "elementType": "labels.text.stroke",
+                        "stylers": [
+                          {
+                            "color": "#f5f5f5"
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "administrative.land_parcel",
+                        "stylers": [
+                          {
+                            "visibility": "off"
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "administrative.land_parcel",
+                        "elementType": "labels.text.fill",
+                        "stylers": [
+                          {
+                            "color": "#bdbdbd"
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "administrative.neighborhood",
+                        "stylers": [
+                          {
+                            "visibility": "off"
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "poi",
+                        "elementType": "geometry",
+                        "stylers": [
+                          {
+                            "color": "#eeeeee"
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "poi",
+                        "elementType": "labels.text.fill",
+                        "stylers": [
+                          {
+                            "color": "#757575"
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "poi.park",
+                        "stylers": [
+                          {
+                            "color": "#fcfcfc"
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "poi.park",
+                        "elementType": "geometry",
+                        "stylers": [
+                          {
+                            "color": "#f6f6f6"
+                          },
+                          {
+                            "weight": 3.5
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "poi.park",
+                        "elementType": "geometry.stroke",
+                        "stylers": [
+                          {
+                            "color": "#a861b1"
+                          },
+                          {
+                            "weight": 3.5
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "poi.park",
+                        "elementType": "labels.text.fill",
+                        "stylers": [
+                          {
+                            "color": "#9e9e9e"
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "road",
+                        "elementType": "geometry",
+                        "stylers": [
+                          {
+                            "color": "#f0c795"
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "road.arterial",
+                        "elementType": "labels.text.fill",
+                        "stylers": [
+                          {
+                            "color": "#757575"
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "road.highway",
+                        "elementType": "geometry",
+                        "stylers": [
+                          {
+                            "color": "#e06c0e"
+                          },
+                          {
+                            "lightness": 75
+                          },
+                          {
+                            "weight": 1
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "road.highway",
+                        "elementType": "labels.text.fill",
+                        "stylers": [
+                          {
+                            "color": "#616161"
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "road.local",
+                        "elementType": "labels.text.fill",
+                        "stylers": [
+                          {
+                            "color": "#9e9e9e"
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "transit.line",
+                        "elementType": "geometry",
+                        "stylers": [
+                          {
+                            "color": "#e5e5e5"
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "transit.station",
+                        "elementType": "geometry",
+                        "stylers": [
+                          {
+                            "color": "#eeeeee"
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "water",
+                        "elementType": "geometry",
+                        "stylers": [
+                          {
+                            "color": "#178ba8"
+                          }
+                        ]
+                      },
+                      {
+                        "featureType": "water",
+                        "elementType": "labels.text.fill",
+                        "stylers": [
+                          {
+                            "color": "#9e9e9e"
+                          }
+                        ]
+                      }
+                    ],
+                    {name: 'Iceland Style'}
+                );
+                
+                // Initialize the map
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat: 64.971, lng:  -18.563},
+                    zoom: 7,
+                    mapTypeId: 'styled_map',
+                    disableDefaultUI: true
+                });
+                
+                // Set the style of the map
+                map.mapTypes.set('styled_map', styledMapType);
+                map.setMapTypeId('styled_map');
+                
+                // Add a marker
+                var marker = new google.maps.Marker({
+                    position: {lat: 64.1466, lng: -21.9426},
+                    map: map
+                });
+                
+                // Add an info window
+                var infoWindow = new google.maps.InfoWindow({
+                    content:    '<div class="content"><h2>Reykjavik</h2><img src="reykjavik.jpg"></div>'
+                });
+                
+//                // Add a popup
+//                var testMarkerPopup = new markerPopup(
+//                    new google.maps.LatLng(65.6826, -18.0907),
+//                    'akureyri.jpg'
+//                );
+//                testMarkerPopup.setMap(map);
+//                var testImagePopup = new imagePopup('akureyri.jpg');
+//                google.maps.event.addDomListener(testMarkerPopup.anchor, 'click', function(){
+//                    testImagePopup.setMap(map);
+//                });
+                
+//                var coords = new google.maps.LatLng(65.6826, -18.0907);
+//                addPhoto(coords, 'akureyri.jpg');
+                var coords_arr = [
+                    //google.maps.LatLng(65.6826, -18.0907), //akureyri
+                    new google.maps.LatLng(64.6366, -19.2694), //kerlingarfjoll
+                    new google.maps.LatLng(64.3271, -20.1199), //gulfoss
+                    new google.maps.LatLng(64.8106, -23.1448), //langaholl
+                    new google.maps.LatLng(64.0440, -16.1806), //jokulsarlon sea
+                    new google.maps.LatLng(64.0600, -16.1715), //jokulsarlon
+                    new google.maps.LatLng(64.8702, -22.2834), //raudamelslaug
+                    new google.maps.LatLng(64.5127, -19.9021), //f35
+                    new google.maps.LatLng(64.1466, -21.9426), //reykjavik
+                    new google.maps.LatLng(65.7409, -19.6405), //saudarkrokur
+                    new google.maps.LatLng(65.7290, -19.1012), //holar
+                    new google.maps.LatLng(64.8504, -21.4387), //baula
+                    new google.maps.LatLng(63.6127, -19.9869)  //seljalandsfoss
+                ]
+            
+                var img_arr = [
+                    //"photos/akureyri.jpg",
+                    "photos/church_place2.jpg",
+                    "photos/gulfoss.jpg",
+                    "photos/krija.jpg",
+                    "photos/lagoon.jpg",
+                    "photos/lagoon2.jpg",
+                    "photos/mineral_water.jpg",
+                    "photos/nowhere.jpg",
+                    "photos/reykjavik.jpg",
+                    "photos/saudarkrokur.jpg",
+                    "photos/town_near_saudarkrokur.jpg",
+                    "photos/triangle_mountain.jpg",
+                    "photos/waterfall.jpg"
+                ]
+       
+                for (var i=0; i<coords_arr.length; i++){
+                    addPhoto(coords_arr[i], img_arr[i]);
+                }
+                
+//                testImagePopup.setMap(map);
+                
+                // Make the marker listen for a click to open the info window
+                marker.addListener('click', function(){
+                    infoWindow.open(map, marker);
+                });
+                
+                
+                map.addListener('click', function(){
+                    infoWindow.close();
+                    currentPopup.setMap(null);
+                })    
+            };
+            
+            function defineImagePopup() {
+                imagePopup = function(imgSrc){
+                    var container = document.createElement('div');
+                    container.classList.add('photo-div');
+                    
+                    var image = document.createElement('img');
+                    image.src = imgSrc;
+                    image.classList.add('photo-img');
+                    container.appendChild(image);
+                    
+                    this.div = container;
+                    this.image = image;
+//                    this.stopEventPropagation();
+                }
+////                
+                imagePopup.prototype = Object.create(google.maps.OverlayView.prototype);
+                imagePopup.prototype.onAdd = function(){
+                    this.getPanes().floatPane.appendChild(this.div);
+                }
+                imagePopup.prototype.onRemove = function(){
+                    if (this.div.parentElement){
+                        this.div.parentElement.removeChild(this.div);
+                    }
+                }
+                imagePopup.prototype.draw = function(){
+                }
+            }
+            
+            /** Defines the markerPopup class. */
+            function defineMarkerPopup() {
+                markerPopup = function(position, imgSrc) {
+                    
+                    this.position = position;
+                    
+                    var content = document.createElement('div');
+                    content.classList.add('popup-bubble-content');
+                    
+                    var image = document.createElement('img');
+                    image.src = imgSrc;
+                    content.appendChild(image);
+
+                    var pixelOffset = document.createElement('div');
+                    pixelOffset.classList.add('popup-bubble-anchor');
+                    pixelOffset.appendChild(content);
+
+                    this.anchor = document.createElement('div');
+                    this.anchor.classList.add('popup-tip-anchor');
+                    this.anchor.appendChild(pixelOffset);
+
+                    this.stopEventPropagation();
+                };
+                    
+                // NOTE: google.maps.OverlayView is only defined once the Maps API has
+                // loaded. That is why Popup is defined inside initMap().
+                markerPopup.prototype = Object.create(google.maps.OverlayView.prototype);
+
+                /** Called when the popup is added to the map. */
+                markerPopup.prototype.onAdd = function() {
+                    this.getPanes().overlayMouseTarget.appendChild(this.anchor);
+                };
+                                                                            
+                /** Called when the popup is removed from the map. */
+                markerPopup.prototype.onRemove = function() {
+                    if (this.anchor.parentElement) {
+                        this.anchor.parentElement.removeChild(this.anchor);
+                    }
+                };
+
+                /** Called when the popup needs to draw itself. */
+                markerPopup.prototype.draw = function() {
+                    var divPosition = this.getProjection().fromLatLngToDivPixel(this.position);
+                    // Hide the popup when it is far out of view.
+                    var display = Math.abs(divPosition.x) < 4000 && Math.abs(divPosition.y) < 4000 ? 'block' : 'none';
+                    if (display === 'block') {
+                        this.anchor.style.left = divPosition.x + 'px';
+                        this.anchor.style.top = divPosition.y + 'px';
+                    }
+                    if (this.anchor.style.display !== display) {
+                        this.anchor.style.display = display;
+                    }
+                };
+                    
+                /** Stops clicks/drags from bubbling up to the map. */
+                markerPopup.prototype.stopEventPropagation = function() {
+                    var anchor = this.anchor;
+                    anchor.style.cursor = 'pointer';
+                  
+                    ['click', 'dblclick', 'contextmenu', 'wheel', 'mousedown', 'touchstart',
+                   'pointerdown']
+                    .forEach(function(event) {
+                        anchor.addEventListener(event, function(e) {
+                            e.stopPropagation();
+                        });
+                    });
+                };
+            };
+    
+            google.maps.event.addDomListener(window, 'load', initMap);
+        </script>
+        
+    </head>
+    <body>
+        <div id="map"></div>
+    </body>
+</html>

@@ -331,16 +331,16 @@
                 map.mapTypes.set('styled_map', styledMapType);
                 map.setMapTypeId('styled_map');
                 
-                // Add a marker
-                var marker = new google.maps.Marker({
-                    position: {lat: 64.1466, lng: -21.9426},
-                    map: map
-                });
-                
-                // Add an info window
-                var infoWindow = new google.maps.InfoWindow({
-                    content:    '<div class="content"><h2>Reykjavik</h2><img src="reykjavik.jpg"></div>'
-                });
+//                // Add a marker
+//                var marker = new google.maps.Marker({
+//                    position: {lat: 64.1466, lng: -21.9426},
+//                    map: map
+//                });
+//                
+//                // Add an info window
+//                var infoWindow = new google.maps.InfoWindow({
+//                    content:    '<div class="content"><h2>Reykjavik</h2><img src="reykjavik.jpg"></div>'
+//                });
                 
 //                // Add a popup
 //                var testMarkerPopup = new markerPopup(
@@ -394,13 +394,13 @@
 //                testImagePopup.setMap(map);
                 
                 // Make the marker listen for a click to open the info window
-                marker.addListener('click', function(){
-                    infoWindow.open(map, marker);
-                });
-                
+//                marker.addListener('click', function(){
+//                    infoWindow.open(map, marker);
+//                });
+//                
                 
                 map.addListener('click', function(){
-                    infoWindow.close();
+//                    infoWindow.close();
                     currentPopup.setMap(null);
                 })    
             };

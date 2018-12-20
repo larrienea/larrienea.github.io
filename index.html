@@ -85,10 +85,6 @@
             .photo-div{
                 margin: 0;
                 padding: 0;
-/*
-                width: 800px;
-                height: 600px;
-*/
                 position: absolute;
                 z-index: 2;
                 transform: translate(-50%, -50%);
@@ -116,6 +112,11 @@
 /*                text-transform: uppercase;*/
                 
             }
+            @media only screen and (max-width: 800px) {
+                .photo-img{
+                    max-height: 30em;
+                }
+            }
         </style>
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDccgyZBYmjbuuDOMy6zsR1GKVTSclBPGs&callback=initMap"></script>
         <script>
@@ -123,7 +124,7 @@
             var markerPopup;
             var imagePopup;
             var markers = [];
-            var currentPopup;
+            var currentPopup = null;
             
      
             function addPhoto(coords, imgsrc, label){
@@ -132,6 +133,9 @@
                 marker.setMap(map);
                 markers.push(marker);
                 google.maps.event.addDomListener(marker.anchor, 'click', function(){
+                    if (currentPopup){
+                        currentPopup.setMap(null);
+                    }
                     img.setMap(map);
                     currentPopup = img;
                 });
@@ -434,7 +438,7 @@
                 ]
                 
                 var labels = [
-                    "Akureyri", "Kerlingarfjöll", "Gullfoss", "Langaholt", 
+                    "Kerlingarfjöll", "Gullfoss", "Langaholt", 
                     "Jökulsárlón", "Jökulsárlón", "Rauðamelslaug", "Highway F35", "Reykjavík",
                     "Sauðárkrókur", "Hólar", "Baula", "Seljalandsfoss"
                 ]
@@ -453,7 +457,10 @@
                 
                 map.addListener('click', function(){
 //                    infoWindow.close();
-                    currentPopup.setMap(null);
+                    if(currentPopup){
+                        currentPopup.setMap(null);
+                        currentPopup = null;
+                    }
                 })    
             };
             

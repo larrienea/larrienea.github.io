@@ -105,8 +105,26 @@
                 height: 5em;
                 position: absolute;
                 top: 0;
-                background-color: rgba(0,0,0,0.7);
+                background-color: rgba(5,25,35,0.7);
 /*                z-index: 10;*/
+            }
+            .arrow{
+                height: 200px;
+                width: 100px;  
+                position: fixed;
+                opacity: 0.7;
+            }
+            .arrow:hover{
+                opacity: 0.9;
+            }
+            .right{
+                background-image: url('arrow_right.png');
+                left: 100%;
+                transform: translate(50%, 100%);
+            }
+            .left{
+                background-image: url('arrow_left.png');
+                transform: translate(-150%, 100%);
             }
             h1{
                 margin: auto 0 auto 0;
@@ -122,20 +140,25 @@
                 .photo-img{
                     max-height: 30em;
                 }
+                .arrow{
+                    display: none;
+                }
             }
         </style>
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDccgyZBYmjbuuDOMy6zsR1GKVTSclBPGs&callback=initMap"></script>
+        <script type="text/javascript" src="places.json"></script>
         <script>
             var map;
             var markerPopup;
             var imagePopup;
             var markers = [];
             var currentPopup = null;
-            
+            var data = places;
      
-            function addPhoto(coords, imgsrc, label){
-                var marker = new markerPopup(coords, imgsrc);
-                var img = new imagePopup(imgsrc, label);
+            function addPhoto(coords, imgArr, label){
+                var marker = new markerPopup(coords, imgArr[0]);
+                var img = new imagePopup(imgArr, label);
+                
                 marker.setMap(map);
                 markers.push(marker);
                 google.maps.event.addDomListener(marker.anchor, 'click', function(){
@@ -145,6 +168,9 @@
                     img.setMap(map);
                     currentPopup = img;
                 });
+                google.maps.event.addDomListener(img.rightArrow, 'click', function(){img.nextImg()});
+                google.maps.event.addDomListener(img.image, 'click', function(){img.nextImg()});
+                google.maps.event.addDomListener(img.leftArrow, 'click', function(){img.prevImg()});
             }
             
             function initMap(){
@@ -387,83 +413,20 @@
                 map.mapTypes.set('styled_map', styledMapType);
                 map.setMapTypeId('styled_map');
                 
-//                // Add a marker
-//                var marker = new google.maps.Marker({
-//                    position: {lat: 64.1466, lng: -21.9426},
-//                    map: map
-//                });
-//                
-//                // Add an info window
-//                var infoWindow = new google.maps.InfoWindow({
-//                    content:    '<div class="content"><h2>Reykjavik</h2><img src="reykjavik.jpg"></div>'
-//                });
-                
-//                // Add a popup
-//                var testMarkerPopup = new markerPopup(
-//                    new google.maps.LatLng(65.6826, -18.0907),
-//                    'akureyri.jpg'
-//                );
-//                testMarkerPopup.setMap(map);
-//                var testImagePopup = new imagePopup('akureyri.jpg');
-//                google.maps.event.addDomListener(testMarkerPopup.anchor, 'click', function(){
-//                    testImagePopup.setMap(map);
-//                });
-                
-//                var coords = new google.maps.LatLng(65.6826, -18.0907);
-//                addPhoto(coords, 'akureyri.jpg');
-                var coords_arr = [
-                    //google.maps.LatLng(65.6826, -18.0907), //akureyri
-                    new google.maps.LatLng(64.6366, -19.2694), //kerlingarfjoll
-                    new google.maps.LatLng(64.3271, -20.1199), //gulfoss
-                    new google.maps.LatLng(64.8106, -23.1448), //langaholl
-                    new google.maps.LatLng(64.0440, -16.1806), //jokulsarlon sea
-                    new google.maps.LatLng(64.0600, -16.1715), //jokulsarlon
-                    new google.maps.LatLng(64.8702, -22.2834), //raudamelslaug
-                    new google.maps.LatLng(64.5127, -19.9021), //f35
-                    new google.maps.LatLng(64.1466, -21.9426), //reykjavik
-                    new google.maps.LatLng(65.7409, -19.6405), //saudarkrokur
-                    new google.maps.LatLng(65.7290, -19.1012), //holar
-                    new google.maps.LatLng(64.8504, -21.4387), //baula
-                    new google.maps.LatLng(63.6127, -19.9869)  //seljalandsfoss
-                ]
-            
-                var img_arr = [
-                    //"photos/akureyri.jpg",
-                    "church_place2.jpg",
-                    "gulfoss.jpg",
-                    "krija.jpg",
-                    "lagoon.jpg",
-                    "lagoon2.jpg",
-                    "mineral_water.jpg",
-                    "nowhere.jpg",
-                    "reykjavik.jpg",
-                    "saudarkrokur.jpg",
-                    "town_near_saudarkrokur.jpg",
-                    "triangle_mountain.jpg",
-                    "waterfall.jpg"
-                ]
-                
-                var labels = [
-                    "Kerlingarfjöll", "Gullfoss", "Langaholt", 
-                    "Jökulsárlón", "Jökulsárlón", "Rauðamelslaug", "Highway F35", "Reykjavík",
-                    "Sauðárkrókur", "Hólar", "Baula", "Seljalandsfoss"
-                ]
-       
-                for (var i=0; i<coords_arr.length; i++){
-                    addPhoto(coords_arr[i], img_arr[i], labels[i]);
+                data_len = Object.keys(data).length;
+                for (var i=0; i<data_len; i++){
+                    var place = data[i];
+                    var img_arr = place.files.split(",")
+                    for (var j=0; j<img_arr.length; j++){
+                        img_arr[j] = 'photos/' + img_arr[j];
+                    }
+                    var coords = new google.maps.LatLng(place.lat, place.long);
+//                    
+                    addPhoto(coords, img_arr, place.label);
                 }
-                
-//                testImagePopup.setMap(map);
-                
-                // Make the marker listen for a click to open the info window
-//                marker.addListener('click', function(){
-//                    infoWindow.open(map, marker);
-//                });
-//                
-                
+
                 map.addListener('click', function(){
-//                    infoWindow.close();
-                    if(currentPopup){
+                  if(currentPopup){
                         currentPopup.setMap(null);
                         currentPopup = null;
                     }
@@ -471,21 +434,29 @@
             };
             
             function defineImagePopup() {
-                imagePopup = function(imgSrc, label){
+                imagePopup = function(imgArr, label){
+                    
+                    // Div to contain the image
                     var container = document.createElement('div');
                     container.classList.add('photo-div');
-                    
-//                    container.style.backgroundImage = `url(${imgSrc})`;
-//                    container.style.backgroundSize = 'auto 100%';
-//                    container.style.backgroundPosition = 'center';
-//                    
+
+                    // Div with the label to the image
                     var titleDiv = document.createElement('div');
                     titleDiv.classList.add('title-div');
                     titleDiv.innerHTML = `<h1>${label}</h1>`;
                     container.appendChild(titleDiv);
                     
+                    // Navigation arrows
+                    var arrowDivRight = document.createElement('div');
+                    var arrowDivLeft = document.createElement('div');
+                    arrowDivRight.classList.add('arrow','right');
+                    arrowDivLeft.classList.add('arrow','left');
+                    container.appendChild(arrowDivRight);
+                    container.appendChild(arrowDivLeft);
+                    
+                    // Image itself
                     var image = document.createElement('img');
-                    image.src = imgSrc;
+                    image.src = imgArr[0];
                     image.classList.add('photo-img');
                     container.appendChild(image);
 
@@ -493,13 +464,18 @@
                     this.image = image;
                     this.title = titleDiv;
                     
-//                    this.image = image;
-//                    this.stopEventPropagation();
+                    this.imgCount = 0;
+                    this.imgNum = imgArr.length;
+                    this.imgArr = imgArr;
+                    this.rightArrow = arrowDivRight;
+                    this.leftArrow = arrowDivLeft;
+                    
+                    this.stopEventPropagation();
                 }
-////                
+
                 imagePopup.prototype = Object.create(google.maps.OverlayView.prototype);
                 imagePopup.prototype.onAdd = function(){
-                    this.getPanes().floatPane.appendChild(this.div);
+                    this.getPanes().overlayMouseTarget.appendChild(this.div);
                 }
                 imagePopup.prototype.onRemove = function(){
                     if (this.div.parentElement){
@@ -508,6 +484,32 @@
                 }
                 imagePopup.prototype.draw = function(){
                 }
+                
+                // Navigation functions
+                imagePopup.prototype.nextImg = function(){
+                    this.imgCount++;
+                    this.imgCount = this.imgCount < this.imgNum ? this.imgCount : 0;
+                    this.image.src = this.imgArr[this.imgCount];
+                }
+                
+                imagePopup.prototype.prevImg = function(){
+                    this.imgCount--;
+                    this.imgCount = this.imgCount < 0 ? this.imgNum-1 : this.imgCount;
+                    this.image.src = this.imgArr[this.imgCount];
+                }
+                
+                imagePopup.prototype.stopEventPropagation = function() {
+                    var anchor = this.div;
+                    anchor.style.cursor = 'pointer';
+                  
+                    ['click', 'dblclick', 'contextmenu', 'wheel', 'mousedown', 'touchstart',
+                   'pointerdown']
+                    .forEach(function(event) {
+                        anchor.addEventListener(event, function(e) {
+                            e.stopPropagation();
+                        });
+                    });
+                };
             }
             
             /** Defines the markerPopup class. */

@@ -88,6 +88,11 @@
                 width: auto;
                 height: auto;
             }
+            .video{
+                max-width: 800px;
+                max-height: 600px;
+                
+            }
             .photo-div{
                 margin: 0;
                 padding: 0;
@@ -111,7 +116,8 @@
             .arrow{
                 height: 200px;
                 width: 100px;  
-                position: fixed;
+                position: absolute;
+                top: 50%;
                 opacity: 0.7;
             }
             .arrow:hover{
@@ -120,22 +126,44 @@
             .right{
                 background-image: url('arrow_right.png');
                 left: 100%;
-                transform: translate(50%, 100%);
+                transform: translate(50%, -100px);
             }
             .left{
                 background-image: url('arrow_left.png');
-                transform: translate(-150%, 100%);
+                transform: translate(-150%, -100px);
+            }
+            h1, h2, h3{
+                display: inline-flex;
+                font-family: 'Oxygen', sans-serif;
+                font-weight: 300;
+                margin: auto 0 auto 0;
             }
             h1{
-                margin: auto 0 auto 0;
                 color: rgba(255, 255, 255, 0.9);
-                font-family: 'Oxygen', sans-serif;
                 font-size: 1.8em;
-                font-weight: 300;
-                padding: 0 1em 0 1em;
-/*                text-transform: uppercase;*/
-                
+                padding: 0 0 0 1em;
             }
+            h2.description{
+                font-size: 1.2em;
+                color: #87d2f2;
+                margin-left: 1em;
+                position: relative;
+                top: 0.2em;
+            }
+            h2.date{
+                font-size: 1.8em;
+                color: rgba(255, 255, 255, 0.9);
+                margin-left: auto;
+                margin-right: 1em;
+            }
+            .separator{
+                display: inline-flex;
+                width: 1.2em;
+                height: 3em;
+                margin: auto 0 auto 0;
+                border-right: 1px solid rgba(170,170,180,0.8);
+            }
+            
             @media only screen and (max-width: 800px) {
                 .photo-img{
                     max-height: 30em;
@@ -155,9 +183,9 @@
             var currentPopup = null;
             var data = places;
      
-            function addPhoto(coords, imgArr, label){
+            function addPhoto(coords, imgArr, label, description, date){
                 var marker = new markerPopup(coords, imgArr[0]);
-                var img = new imagePopup(imgArr, label);
+                var img = new imagePopup(imgArr, label, description, date);
                 
                 marker.setMap(map);
                 markers.push(marker);
@@ -168,9 +196,13 @@
                     img.setMap(map);
                     currentPopup = img;
                 });
-                google.maps.event.addDomListener(img.rightArrow, 'click', function(){img.nextImg()});
-                google.maps.event.addDomListener(img.image, 'click', function(){img.nextImg()});
-                google.maps.event.addDomListener(img.leftArrow, 'click', function(){img.prevImg()});
+
+                if (img.imgNum > 1){
+                    google.maps.event.addDomListener(img.rightArrow, 'click', function(){img.nextImg()});
+                    google.maps.event.addDomListener(img.image, 'click', function(){img.nextImg()});
+                    google.maps.event.addDomListener(img.image, 'dragstart', function(){img.nextImg()});
+                    google.maps.event.addDomListener(img.leftArrow, 'click', function(){img.prevImg()});
+                }
             }
             
             function initMap(){
@@ -422,7 +454,7 @@
                     }
                     var coords = new google.maps.LatLng(place.lat, place.long);
 //                    
-                    addPhoto(coords, img_arr, place.label);
+                    addPhoto(coords, img_arr, place.label, place.description, place.date);
                 }
 
                 map.addListener('click', function(){
@@ -434,25 +466,40 @@
             };
             
             function defineImagePopup() {
-                imagePopup = function(imgArr, label){
+                imagePopup = function(imgArr, label, description, date){
+                    
+                    this.imgCount = 0;
+                    this.imgNum = imgArr.length;
+                    this.imgArr = imgArr;
                     
                     // Div to contain the image
                     var container = document.createElement('div');
                     container.classList.add('photo-div');
 
-                    // Div with the label to the image
+                    // If description is not given, set it to blank 
                     var titleDiv = document.createElement('div');
                     titleDiv.classList.add('title-div');
-                    titleDiv.innerHTML = `<h1>${label}</h1>`;
+                    if (description) {
+                        titleDiv.innerHTML = `<h1>${label}</h1>` +
+                        `<div class="separator"></div>` + 
+                        `<h2 class="description">${description}</h2>` +
+                        `<h2 class="date">${date}</h3>`;
+                    } else {
+                        titleDiv.innerHTML = `<h1>${label}</h1>` +
+                        `<h2 class="date">${date}</h3>`;
+                    }
+                    
                     container.appendChild(titleDiv);
                     
                     // Navigation arrows
-                    var arrowDivRight = document.createElement('div');
-                    var arrowDivLeft = document.createElement('div');
-                    arrowDivRight.classList.add('arrow','right');
-                    arrowDivLeft.classList.add('arrow','left');
-                    container.appendChild(arrowDivRight);
-                    container.appendChild(arrowDivLeft);
+                    if (this.imgNum > 1){
+                        var arrowDivRight = document.createElement('div');
+                        var arrowDivLeft = document.createElement('div');
+                        arrowDivRight.classList.add('arrow','right');
+                        arrowDivLeft.classList.add('arrow','left');
+                        container.appendChild(arrowDivRight);
+                        container.appendChild(arrowDivLeft);
+                    }
                     
                     // Image itself
                     var image = document.createElement('img');
@@ -463,10 +510,7 @@
                     this.div = container;
                     this.image = image;
                     this.title = titleDiv;
-                    
-                    this.imgCount = 0;
-                    this.imgNum = imgArr.length;
-                    this.imgArr = imgArr;
+                
                     this.rightArrow = arrowDivRight;
                     this.leftArrow = arrowDivLeft;
                     

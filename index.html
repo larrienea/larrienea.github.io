@@ -6,6 +6,7 @@
         <meta charset="utf-8">
         <link href="https://fonts.googleapis.com/css?family=Oxygen:300,400" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Lobster&amp;subset=cyrillic" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Great+Vibes" rel="stylesheet">
         <style>
             /*Always set the map style explicitly to define the size of the div element that contains it*/
             #map{
@@ -177,7 +178,7 @@
                 z-index: 10;
                 top: 0;
                 left: 0;
-                transition-duration: 1s;
+                transition-duration: 1.5s;
             }
             .overlay{
                 position: absolute;
@@ -227,6 +228,17 @@
             .button:hover{
                 background-color: #e5ddcf;
                 color: #000;
+            }
+            .title{
+                position: fixed;
+                top: 0;
+                right: 0;
+                font-size: 4em;
+                font-family: 'Great Vibes', cursive;
+                color: white;
+                z-index: 5;
+                padding: 0.5em 1em 0 0;
+                text-align: right
             }
             
             
@@ -721,6 +733,7 @@
                 </div>
             </div>
         </div>
+        <div class="title">Iceland<br>July 2018</div>
         <div id="map"></div>
         <audio autoplay loop id="bg_music"><source src="bg_music.mp3" type="audio/mpeg"></audio>
         <script>

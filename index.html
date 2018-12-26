@@ -641,6 +641,8 @@
                     this.anchor.classList.add('popup-tip-anchor');
                     this.anchor.appendChild(pixelOffset);
                     
+                    this.content = content;
+                    
                     this.stopEventPropagation();
                 };
                     
@@ -672,6 +674,10 @@
                     if (this.anchor.style.display !== display) {
                         this.anchor.style.display = display;
                     }
+                    
+                    // Set the bubbles to diff sizes just for fun
+                    var width = 50 + 15*(Math.random()-0.5);
+                    this.content.style.maxWidth = width + 'px';
                 };
                     
                 /** Stops clicks/drags from bubbling up to the map. */

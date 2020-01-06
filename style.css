@@ -108,33 +108,54 @@ ul{
 }
 
 
-#content{
+#extra_links{
+  width:   100%;
+  display: table;
+  padding: 0
+}
+
+.content{
+  float: right;
   background: #fff;
-  width: 75%;	
-  position: absolute;
-  left: 25%;
+  width: 75%;
   padding: 0;
+  margin: 0 auto 0 auto;
 }
 
 
 
 .links, .other{
   width: 80%;
-  background: #000;
   padding: 0;
   margin: 0 auto 0 auto;
 }
 
-#extra_links{
-  width:   100%;
-  display: table;
-}
 
 .link{
   display: table-cell;
-  background: #ccc;
+  width: 33.3333333%;
+  border: 1px solid #fff;
+  padding: 0px;
+  position: relative;
+}
+
+
+.overlay{
+  position: absolute;
+  height: 2em;
+  width: 100%;
+  background: #fff;
+  opacity: 0.8;
+  font-size: 0.8em;
   text-align: center;
-  border: 1px solid #fff
+  line-height: 2em;
+  
+}
+
+@media (any-hover: hover) {
+  .overlay {
+	display: none;
+  }
 }
 
 #extra_links .link{
@@ -180,49 +201,49 @@ ul{
   background-size: contain;
 }
 
-#mass{
+.mass{
   background: url('images/abell_bcg.jpg');
   background-size: cover;
   background-position: center;
 }
 
-#mass:hover, #mass:active{
+.mass:hover, .mass:active{
   background: url('images/abell_bcg_hover.jpg');
   background-size: cover;
   background-position: center;
 }
 
-#r{
+.r{
   background: url('images/radius.png');
   background-size: cover;
   background-position: center;
 }
 
-#r:hover, #r:active{
+.r:hover, .r:active{
   background: url('images/radius_hover.png');
   background-size: cover;
   background-position: center;
 }
 
-#morph{
+.morph{
   background: url('images/spiral.jpg');
   background-size: cover;
   background-position: center;
 }
 
-#morph:hover, #morph:active{
+.morph:hover, .morph:active{
   background: url('images/spiral_hover.jpg');
   background-size: cover;
   background-position: center;
 }
 
-#method{
+.method{
   background: url('images/mcmc.png');
   background-size: cover;
   background-position: center;
 }
 
-#method:hover, #method:active{
+.method:hover, .method:active{
   background: url('images/mcmc_hover.png');
   background-size: cover;
   background-position: center;
@@ -235,4 +256,9 @@ ul{
 
 #content img{
   width: 100%;
+}
+
+.text{
+  width: 80%;
+  margin: 2em auto 0px auto;
 }

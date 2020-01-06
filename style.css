@@ -35,7 +35,7 @@ a:active{
 
 #header{
   width: 100%;
-  height: 20%;
+  height: 10%;
   background: #333;
   display: flex;
 }
@@ -64,7 +64,7 @@ a:active{
 
 
 #sidebar{
-  width: 20%;
+  width: 25%;
   background: #ddd;	
   float: left;
   padding-top: 3em;	
@@ -110,9 +110,9 @@ ul{
 
 #content{
   background: #fff;
-  width: 80%;	
+  width: 75%;	
   position: absolute;
-  left: 20%;
+  left: 25%;
   padding: 0;
 }
 
@@ -175,7 +175,7 @@ ul{
 }
 
 
-#link-main:hover{
+#link-main:hover, #link-main:active{
   background: url('images/final_thumb_hover.jpg');
   background-size: contain;
 }
@@ -186,7 +186,7 @@ ul{
   background-position: center;
 }
 
-#mass:hover{
+#mass:hover, #mass:active{
   background: url('images/abell_bcg_hover.jpg');
   background-size: cover;
   background-position: center;
@@ -198,7 +198,7 @@ ul{
   background-position: center;
 }
 
-#r:hover{
+#r:hover, #r:active{
   background: url('images/radius_hover.png');
   background-size: cover;
   background-position: center;
@@ -210,7 +210,7 @@ ul{
   background-position: center;
 }
 
-#morph:hover{
+#morph:hover, #morph:active{
   background: url('images/spiral_hover.jpg');
   background-size: cover;
   background-position: center;
@@ -222,7 +222,7 @@ ul{
   background-position: center;
 }
 
-#method:hover{
+#method:hover, #method:active{
   background: url('images/mcmc_hover.png');
   background-size: cover;
   background-position: center;

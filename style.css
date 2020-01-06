@@ -249,16 +249,16 @@ ul{
   background-position: center;
 }
 
-#content div{
+.content div{
   width: 80%;
-  margin: 2em auto 0 auto
+  margin: 2em auto 0 auto;
 }
 
-#content img{
+.plot img{
   width: 100%;
 }
 
-.text{
+.text, .plot{
   width: 80%;
   margin: 2em auto 0px auto;
 }

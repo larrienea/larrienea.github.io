@@ -1,3 +1,8 @@
+@viewport {
+  width: device-width ;
+  zoom: 1.0 ;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -7,7 +12,7 @@
 html, body{
   height: 100%;
   width: 100vw;
-  font-size: 2.3vh;
+  font-size: 2.3vmin;
   font-family: 'Open Sans', sans-serif;
 }
 

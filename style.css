@@ -153,7 +153,7 @@ ul{
 
 @media (any-hover: hover) {
   .overlay {
-	display: visible;
+	display: none;
   }
 }
 
